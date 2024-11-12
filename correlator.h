@@ -1,16 +1,6 @@
 #ifndef correlator_h
 #define correlator_h
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <fftw3.h>
-#include <complex.h>
-
-
-#include "atmosphere.h"
-#include "dataio.h"
-#include "filter.h" 
-
 struct correlator_t;
 
 int correlator_isempty(struct correlator_t *correlator);

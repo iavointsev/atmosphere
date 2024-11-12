@@ -1,6 +1,8 @@
 /*Functions for creating histogram */
-#include "histogram.h"
+#include <stdio.h>
+#include <stdlib.h>
 
+#include "filter.h" 
 
 #define N_BINS_STD 256
 

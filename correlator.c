@@ -1,4 +1,10 @@
-#include "correlator.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <fftw3.h>
+#include <complex.h>
+
+#include "dataio.h"
+#include "filter.h" 
 
 
 typedef struct
