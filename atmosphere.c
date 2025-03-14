@@ -11,7 +11,7 @@
 #include "atmosphere.h"
 
 /* NX and NY should be even */
-unsigned long int NX=0, NY=0, noise_NX=0, noise_NY=0, realizations_number=0, realizations_current = 0;
+unsigned long int NX=0, NY=0, noise_NX=0, noise_NY=0, realizations_number=0;
 double LX=0.0, LY=0.0, delta_z=0.0, lambda_0=0.0, n_0=0.0, C_n_sqr=0.0, w_0=0.0, l_0=0.0, L_0=0.0;
 
 unsigned long int N_BINS = 0;
@@ -28,14 +28,6 @@ fftw_plan plan_fwd, plan_bwd, plan_bwd_S_k;
 double *scales_filter_mask;
 double k_mask_smallest_sqr=0.0, k_mask_largest_sqr=0.0;
 #endif /* SCALES_FILTER */
-
-#ifdef HISTOGRAM
-    struct histogram_t *histogram;
-#endif /* HISTOGRAM */
-
-#ifdef CORRELATOR
-    struct correlator_t *correlator;
-#endif /* CORRELATOR */
 
 const double double_M_PI = 2.0*(M_PI);
 
@@ -54,7 +46,7 @@ char file_name[256];
 int main (int argc, char** argv) {
 	char name[256], name2[256], ext[256], temp_char[256];
 	double distance_initial=0.0, distance_current, LX_read=0.0, LY_read=0.0, seconds, max_intensity_overall=0.0, zero_avrg=0.0;
-	unsigned long int z_step, step_number=0, NX_read=0, NY_read=0, realizations_save_step=0, max_intensity_index, zero_index;
+	unsigned long int z_step, step_number=0, NX_read=0, NY_read=0, realizations_save_step=0, realization_current, max_intensity_index, zero_index;
 	struct timespec start, finish;
 	
 	/*Parsing command line.*/
@@ -88,15 +80,15 @@ int main (int argc, char** argv) {
 	sscanf(argv[3], "%lu", &step_number);
 /*** initialization and calculation of arrays ***/
 #ifdef THREADS_NUMBER
-	my_thr_pool_init((THREADS_NUMBER));
+	my_thr_pool_init ((THREADS_NUMBER));
 #endif /* THREADS_NUMBER */
 
-	arrays_init();
-	plans_init();
-	rng_init(argc, argv);
-	arrays_fill();
+	arrays_init ();
+	plans_init ();
+	rng_init (argc, argv);
+	arrays_fill ();
 
-	read_data_complex(argv[2], psi, &NX_read, &NY_read, &LX_read, &LY_read, &distance_initial); /* Reading data in XY-space */
+	read_data_complex (argv[2], psi, &NX_read, &NY_read, &LX_read, &LY_read, &distance_initial); /* Reading data in XY-space */
 
 	if ((NX_read != NX) || (NY_read != NY) || (LX_read != LX) || (LY_read != LY)) {
 		printf ("File %s has parameters incompatible with conf-file %s! Exiting...\n", argv[2], argv[1]);
@@ -135,16 +127,23 @@ int main (int argc, char** argv) {
         printf("max_intensity parameter is zero!");
         exit(1);
     }
-    histogram = histogram_new();
+    struct histogram_t *histogram = histogram_new();
     histogram_ctor(histogram, NX, realizations_number, max_intensity_value, N_BINS);
 #endif /* HISTOGRAM */
 
 #ifdef CORRELATOR
-    correlator = correlator_new();
-    double R0 = 0.5;
-    double dx = LX / NX;
-    correlator_ctor(correlator, dx, R0, NX);
+    struct correlator_t *correlator = correlator_new();
+    correlator_ctor(correlator, NX);
 #endif /* CORRELATOR */
+
+#ifdef MEAN_INTENSITY
+    double *mean_I;
+    mean_I = (double*) fftw_malloc (NX_NY*sizeof(double));
+    for(size_t r = 0; r < NX_NY; ++r)
+    {
+		mean_I[r] = 0.0;
+    }
+#endif /* MEAN_INTENSITY */
 
 	for (realization_current=0; realization_current < realizations_number; ++realization_current) {
 		memcpy (psi, psi0, NX_NY*sizeof(fftw_complex));
@@ -212,19 +211,17 @@ int main (int argc, char** argv) {
 #ifdef CORRELATOR
     correlator_collect_statistics(correlator, psi, NX);
 #endif /* CORRELATOR */
+#ifdef MEAN_INTENSITY
+    mean_intensity_collect_statistics(mean_I, psi_abs_sqr, NX_NY);
+#endif /* MEAN_INTENSITY */
     }
 
 #ifdef HISTOGRAM
-    histogram_scale(histogram);
+    histogram_scale (histogram);
     sprintf (name, "histogram_%06lu_realizations.", realizations_number);
 	strcat (name, ext);
     histogram_save_to_file (histogram, name);
 #endif /* HISTOGRAM */
-
-#ifdef CORRELATOR
-    correlator_calculate_acf(correlator, NX_NY, realizations_number);
-    correlator_save_GNU(correlator, "GNU.correlator.cdata", NX, NY, LX, LY, 2);
-#endif /* CORRELATOR */
 
 #ifdef TIMING
 	clock_gettime(CLOCK_MONOTONIC, &finish);
@@ -252,24 +249,38 @@ int main (int argc, char** argv) {
 	save_GNU_XY_c ("GNU.final_data_1024_XY.cdata", psi, NX, NY, LX, LY, 1);
 #endif /* SAVE_INITIAL_XY */
 
+#ifdef CORRELATOR
+    correlator_calculate_acf(correlator, NX_NY, realizations_number);
+    correlator_save_GNU(correlator, "GNU.correlator.cdata", NX, NY, LX, LY, 2);
+#endif /* CORRELATOR */
+
+#ifdef MEAN_INTENSITY
+    mean_intensity_scalarize(mean_I, psi_abs_sqr, NX_NY, realizations_number);
+    mean_intensity_save_GNU(mean_I, "GNU.mean_intensity.cdata", NX, NY, LX, LY, 2);
+#endif /* MEAN_INTENSITY */
+
 /*** freeing memory ***/
 #ifdef THREADS_NUMBER
-	my_thr_pool_clear();
+	my_thr_pool_clear ();
 #endif
 
 #ifdef HISTOGRAM
-	histogram_dtor(histogram);
-	free(histogram); 
+    histogram_dtor(histogram);
+    free(histogram); 
 #endif /* HISTOGRAM */
 
 #ifdef CORRELATOR
-	correlator_dtor(correlator);
-	free(correlator); 
+    correlator_dtor(correlator);
+    free(correlator); 
 #endif /* CORRELATOR */
 
-	plans_destroy();
-	rng_destroy(argc, argv);
-	arrays_free();
+#ifdef MEAN_INTENSITY
+	fftw_free ((void*) mean_I);
+#endif /* MEAN_INTENSITY */
+
+	plans_destroy ();
+	rng_destroy (argc, argv);
+	arrays_free ();
 
 	return 0;
 }
