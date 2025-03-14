@@ -11,10 +11,9 @@
 
 #include "my_thr_lib.h"
 #include "dataio.h"
-
 #include "histogram.h"
 #include "correlator.h"
-#include "sighandler.h"
+#include "mean_intensity.h"
 
 #define _VERBOSE
 #define _SUPER_VERBOSE
@@ -44,7 +43,8 @@
 #define _SAVE_FINAL_XY
 
 #define HISTOGRAM
-#define CORRELATOR
+#define _CORRELATOR
+#define MEAN_INTENSITY
 #define _MAX_INTENSITY_STAT
 
 /*** definitions for arrays_init.c ***/
