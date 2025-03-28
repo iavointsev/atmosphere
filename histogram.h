@@ -8,7 +8,7 @@ struct histogram_t* histogram_new ();
 void histogram_ctor (struct histogram_t *histogram, unsigned long int NX, unsigned long realizations_number, double max_intensity_value, unsigned long int N_BINS);
 void histogram_dtor (struct histogram_t *histogram);
 
-void histogram_fill (struct histogram_t *histogram, double *input, size_t NX);
+void histogram_fill (struct histogram_t *histogram, double *input, double *normalize, size_t NX);
 void histogram_scale (struct histogram_t *histogram);
 void histogram_save_to_file (struct histogram_t *histogram, char* f_name);
 

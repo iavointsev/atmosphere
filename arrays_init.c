@@ -24,6 +24,7 @@ void arrays_init (void) {
 
 	xi_k_mul = (double*) fftw_malloc (noise_NX_NY_cr*sizeof(double));
 	S = (double*) fftw_malloc (NX_NY*sizeof(double));
+	psi0_abs_sqr = (double*) fftw_malloc (NX_NY*sizeof(double));
 	psi_abs_sqr = (double*) fftw_malloc (NX_NY*sizeof(double));
 #ifdef MAX_INTENSITY_STAT
 	intensity_maximums = (double*) fftw_malloc (realizations_number*sizeof(double));
@@ -58,6 +59,7 @@ void arrays_free (void) {
 	fftw_free ((void*) xi_k_mul);
 	fftw_free ((void*) S);
 	fftw_free ((void*) psi_abs_sqr);
+	fftw_free ((void*) psi0_abs_sqr);
 #ifdef MAX_INTENSITY_STAT
 	fftw_free ((void*) intensity_maximums);
 #endif // MAX_INTENSITY_STAT

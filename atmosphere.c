@@ -96,6 +96,7 @@ int main (int argc, char** argv) {
 	}
 
 	memcpy (psi0, psi, NX_NY*sizeof(fftw_complex));
+	abs_sqr_cdata (psi0, psi0_abs_sqr, NX_NY);
 #ifdef SAVE_INITIAL_XY
 	save_GNU_XY_c ("GNU.initial_data_XY.cdata", psi, (NX), (NY), (LX), (LY), 10);
 #endif /* SAVE_INITIAL_XY */
@@ -205,7 +206,7 @@ int main (int argc, char** argv) {
 #endif // MAX_INTENSITY_STAT
        //
 #ifdef HISTOGRAM
-        histogram_fill (histogram, psi_abs_sqr, NX);
+        histogram_fill(histogram, psi_abs_sqr, psi0_abs_sqr, NX);
 #endif /* HISTOGRAM */
 
 #ifdef CORRELATOR

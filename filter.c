@@ -12,10 +12,10 @@ filter_t* filter_new () {
     return (filter_t*) malloc(sizeof(filter_t));
 }
 
-void filter_ctor (filter_t *filter, unsigned long int NX) {
+void filter_ctor(filter_t *filter, unsigned long int NX) {
     size_t tmp = pow(2, FILTER_FACTOR);
-    filter->ind_initial = NX * (tmp - 1) / (2 * tmp);
-    filter->ind_final   = NX * (tmp + 1) / (2 * tmp);
+    filter->ind_initial = NX * (tmp - 1) / (2 * tmp) - 1;
+    filter->ind_final   = NX * (tmp + 1) / (2 * tmp) - 1;
 }
 
 void filter_dtor (filter_t *filter) {

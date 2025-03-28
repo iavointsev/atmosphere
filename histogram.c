@@ -24,13 +24,13 @@ void histogram_ctor (histogram_t *histogram, unsigned long int NX, unsigned long
 
     unsigned char verify_N_BINS = (N_BINS > 0) && !(N_BINS & (N_BINS - 1));
     if (!verify_N_BINS) {
-        printf("Warning! %lu is invalid value for number of bins (should be power of 2). Using %lu as standard value", N_BINS, (unsigned long int)N_BINS_STD);
+        printf("Warning! %lu is invalid value for number of bins (should be power of 2). Using %lu as standard value\n", N_BINS, (unsigned long int)N_BINS_STD);
         N_BINS = N_BINS_STD;
     }
 
     double delta = max_intensity_value / N_BINS;
 
-    printf("N_BINS = %lu", N_BINS);
+    printf("N_BINS = %lu\n", N_BINS);
 
     histogram->_N_BINS = N_BINS;
     histogram->x = calloc(N_BINS, sizeof(double));
@@ -38,9 +38,9 @@ void histogram_ctor (histogram_t *histogram, unsigned long int NX, unsigned long
     histogram->scaled = calloc(N_BINS, sizeof(double));
 
     for (size_t i = 0; i < N_BINS; ++i) {
-        histogram->x [i] = i * delta; 
-        histogram->values [i] = 0; 
-        histogram->scaled [i] = 0.0; 
+        histogram->x[i] = i * delta; 
+        histogram->values[i] = 0; 
+        histogram->scaled[i] = 0.0; 
     }
 
     size_t histogram_number_of_points = NX * NX / (FILTER_FACTOR * FILTER_FACTOR);
@@ -59,17 +59,18 @@ void histogram_dtor (histogram_t *histogram) {
     free (histogram->filter);
 }
 
-void histogram_fill (histogram_t *histogram, double *input, size_t NX) {
-    size_t ind_initial, ind_final;
+void histogram_fill (histogram_t *histogram, double *input, double *normalize, size_t NX) {
     size_t ij, output_ind;
+    double normalized;
 
-    ind_initial = filter_get_ind_initial(histogram->filter);
-    ind_final   = filter_get_ind_final(histogram->filter);
+    size_t ind_initial = filter_get_ind_initial(histogram->filter);
+    size_t ind_final   = filter_get_ind_final(histogram->filter);
 
     for (size_t indy = ind_initial; indy < ind_final; ++indy) {
         for (size_t indx = ind_initial; indx < ind_final; ++indx) {
             ij = indx + NX * indy;
-            output_ind = (size_t) (input [ij] * histogram->index_factor);
+            normalized = input[ij] / normalize[ij];
+            output_ind = (size_t) (normalized * histogram->index_factor);
             if (output_ind >= histogram->_N_BINS)
                 continue;
             ++(histogram->values[output_ind]);
