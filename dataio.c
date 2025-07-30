@@ -557,8 +557,9 @@ void save_point_real_GNU (char* f_name, double input, double index_value1) {
 	fclose(f_p);
 }
 
-void read_conf_file (char* f_name, unsigned long int *NX, unsigned long int *NY, unsigned long int *noise_NX, unsigned long int *noise_NY, double *LX, double *LY, double *delta_z, double *lambda_0, double *n_0, double *C_n_sqr, double *w_0, double *l_0, double *L_0, unsigned long int *realizations_number, unsigned long int *realizations_save_step, double *max_intensity_value, unsigned long int *N_BINS) {
+ProblemConfig read_conf_file(char* f_nam) {
 	FILE* f_p;
+	ProblemConfig = config;
 	char *buffer, *tok, *remainder;
 	unsigned long int buffer_size=256;
 
@@ -575,73 +576,99 @@ void read_conf_file (char* f_name, unsigned long int *NX, unsigned long int *NY,
 		if ((tok = strsep(&remainder, "=")) != NULL) {
 			if ((tok != NULL) && (remainder != NULL)) {
 				if (!strcmp(tok,"NX")) {
-					sscanf(remainder, "%lu", NX);
-					printf ("NX=%lu\n", *NX);
+					sscanf(remainder, "%lu", &config.NX);
+					printf("NX=%lu\n", config.NX);
 				} else if (!strcmp(tok,"NY")) {
-					sscanf(remainder, "%lu", NY);
-					printf ("NY=%lu\n", *NY);
+					sscanf(remainder, "%lu", &config.NY);
+					printf("NY=%lu\n", config.NY);
 				} else if (!strcmp(tok,"noise_NX")) {
-					sscanf(remainder, "%lu", noise_NX);
-					printf ("noise_NX=%lu\n", *noise_NX);
+					sscanf(remainder, "%lu", &config.noise_NX);
+					printf("noise_NX=%lu\n", config.noise_NX);
 				} else if (!strcmp(tok,"noise_NY")) {
-					sscanf(remainder, "%lu", noise_NY);
-					printf ("noise_NY=%lu\n", *noise_NY);
+					sscanf(remainder, "%lu", &config.noise_NY);
+					printf("noise_NY=%lu\n", config.noise_NY);
 				} else if (!strcmp(tok,"LX")) {
-					sscanf(remainder, "%le", LX);
-					printf ("LX=%.6e\n", *LX);
+					sscanf(remainder, "%le", &config.LX);
+					printf("LX=%.6e\n", config.LX);
 				} else if (!strcmp(tok,"LY")) {
-					sscanf(remainder, "%le", LY);
-					printf ("LY=%.6e\n", *LY);
+					sscanf(remainder, "%le", &config.LY);
+					printf("LY=%.6e\n", config.LY);
 				} else if (!strcmp(tok,"delta_z")) {
-					sscanf(remainder, "%le", delta_z);
-					printf ("delta_z=%.6e\n", *delta_z);
+					sscanf(remainder, "%le", &config.delta_z);
+					printf("delta_z=%.6e\n", config.delta_z);
 				} else if (!strcmp(tok,"lambda_0")) {
-					sscanf(remainder, "%le", lambda_0);
-					printf ("lambda_0=%.6e\n", *lambda_0);
+					sscanf(remainder, "%le", &config.lambda_0);
+					printf("lambda_0=%.6e\n", config.lambda_0);
 				} else if (!strcmp(tok,"n_0")) {
-					sscanf(remainder, "%le", n_0);
-					printf ("n_0=%.6e\n", *n_0);
+					sscanf(remainder, "%le", &config.n_0);
+					printf("n_0=%.6e\n", config.n_0);
 				} else if (!strcmp(tok,"C_n_sqr")) {
-					sscanf(remainder, "%le", C_n_sqr);
-					printf ("C_n_sqr=%.6e\n", *C_n_sqr);
+					sscanf(remainder, "%le", &config.C_n_sqr);
+					printf("C_n_sqr=%.6e\n", config.C_n_sqr);
 				} else if (!strcmp(tok,"w_0")) {
-					sscanf(remainder, "%le", w_0);
-					printf ("w_0=%.6e\n", *w_0);
+					sscanf(remainder, "%le", &config.w_0);
+					printf("w_0=%.6e\n", config.w_0);
 				} else if (!strcmp(tok,"l_0")) {
-					sscanf(remainder, "%le", l_0);
-					printf ("l_0=%.6e\n", *l_0);
+					sscanf(remainder, "%le", &config.l_0);
+					printf("l_0=%.6e\n", config.l_0);
 				} else if (!strcmp(tok,"L_0")) {
-					sscanf(remainder, "%le", L_0);
-					printf ("L_0=%.6e\n", *L_0);
+					sscanf(remainder, "%le", &config.L_0);
+					printf("L_0=%.6e\n", config.L_0);
 				} else if (!strcmp(tok,"realizations_number")) {
-					sscanf(remainder, "%lu", realizations_number);
-					printf ("realizations_number=%lu\n", *realizations_number);
+					sscanf(remainder, "%lu", &config.realizations_number);
+					printf("realizations_number=%lu\n", config.realizations_number);
 				} else if (!strcmp(tok,"realizations_save_step")) {
-					sscanf(remainder, "%lu", realizations_save_step);
-					printf ("realizations_save_step=%lu\n", *realizations_save_step);
+					sscanf(remainder, "%lu", &config.realizations_save_step);
+					printf("realizations_save_step=%lu\n", config.realizations_save_step);
 				} else if (!strcmp(tok,"max_intensity_value")) {
-					sscanf(remainder, "%le", max_intensity_value);
-					printf ("max_intensity_value=%.6e\n", *max_intensity_value);
+					sscanf(remainder, "%le", &config.max_intensity_value);
+					printf("max_intensity_value=%.6e\n", config.max_intensity_value);
 				} else if (!strcmp(tok,"N_BINS")) {
-					sscanf(remainder, "%lu", N_BINS);
-					printf ("N_BINS=%lu\n", *N_BINS);
+					sscanf(remainder, "%lu", &config.N_BINS);
+					printf("N_BINS=%lu\n", config.N_BINS);
 				} else {
-					printf ("Variable \"%s\" is not known.\n", tok);
+					printf("Variable \"%s\" is not known.\n", tok);
 				}
 			} else {
-				printf ("%s", tok);
+				printf("%s", tok);
 			}
 		}
 	}
 
 	fflush(stdout);
-	if (!((*NX)*(*NY)*(*noise_NX)*(*noise_NY)*(*LX)*(*LY)*(*delta_z)*(*lambda_0)*(*n_0)*(*C_n_sqr)*(*w_0)*(*max_intensity_value))) {
-		printf ("Something wrong: one or more variables are zeros! Exiting...\n");
-		exit(1);
-	}
+	validate_config(&config)
 
 	free(buffer);
 	fclose(f_p);
+
+	return config;
+}
+
+// Просто жесть...
+void validate_config(ProblemConfig *config) {
+	// config->w_0  может быть не задан, если не гаусс
+	// config-> realizations_save_step может быть не задан, не нужен
+	int is_valid =  
+		(
+			config->NX * config->NY *
+			config->LX * config->LY *
+			config->noise_NX * config-> noise_NY *
+			config-> realizations_number * config-> N_BINS != 0
+		) *
+		(
+			(config-> delta_z > 0) *
+			(config->lambda_0 > 0) *
+			(config-> n_0 > 0) *
+			(config->C_n_sqr > 0) *
+			(config->l_0 > 0)  *
+			(config->L_0 > 0) *
+			(config->max_intensity_value > 0) != 0
+		);
+
+	if (!is_valid) {
+		printf ("Something wrong: one or more variables are zeros! Exiting...\n");
+		exit(1);
+	}
 }
 
 void read_rng_state (char *f_name, gsl_rng *rng) {
