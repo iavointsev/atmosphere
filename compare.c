@@ -9,7 +9,7 @@ compare two complex PSI arrays in XY plane.
 #include <complex.h>
 #include "utils.h"
 
-double L_infty_norm (fftw_complex *input, unsigned long int points_number) {
+double L_infty_norm (complex_t *input, unsigned long int points_number) {
 	double max=0.0, current_abs_sqr;
 	unsigned long int i;
 
@@ -21,7 +21,7 @@ double L_infty_norm (fftw_complex *input, unsigned long int points_number) {
 	return sqrt(max);
 }
 
-unsigned long int L_infty_norm_index (fftw_complex *input, unsigned long int points_number) {
+unsigned long int L_infty_norm_index (complex_t *input, unsigned long int points_number) {
 	double max=0.0, current_abs_sqr;
 	unsigned long int i, max_index=0;
 
@@ -39,7 +39,7 @@ unsigned long int L_infty_norm_index (fftw_complex *input, unsigned long int poi
 int main(int argc, char** argv) {
 	ldiv_t	division;
 	double z=0.0, LX=0.0, LY=0.0, abs_diff, abs_value;
-	fftw_complex *input1, *input2;
+	complex_t *input1, *input2;
 	unsigned long int factor=0, i, j, ij, ij_big, big_NX, big_NY, NX=0, NY=0, step_x=0, step_y=0;
 	
 	/*Parsing command line.*/
@@ -56,8 +56,8 @@ int main(int argc, char** argv) {
 	sscanf (argv [3], "%lu", &step_y);
 	big_NX = NX*step_x;
 	big_NY = NY*step_y;
-	input1 = (fftw_complex*) malloc (NX*NY*sizeof(fftw_complex));
-	input2 = (fftw_complex*) malloc (big_NX*big_NY*sizeof(fftw_complex));
+	input1 = (complex_t*) malloc (NX*NY*sizeof(complex_t));
+	input2 = (complex_t*) malloc (big_NX*big_NY*sizeof(complex_t));
 	read_data_complex (argv[1], input1, &NX, &NY, &LX, &LY, &z);
 	read_data_complex (argv[4], input2, &big_NX, &big_NY, &LX, &LY, &z);
 

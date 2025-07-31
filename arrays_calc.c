@@ -1,5 +1,5 @@
 
-void calc_exp_refr (fftw_complex *rng_pairs_io) {
+void calc_exp_refr (complex_t *rng_pairs_io) {
 	const unsigned long int noise_NY_2 = noise_NY/2;
 	const unsigned long int noise_NX_cr = (noise_NX/2 +1);
 	double u1, u2;
@@ -36,7 +36,7 @@ void calc_exp_refr (fftw_complex *rng_pairs_io) {
 	angle_sqr_avrg_GNU_k_cr ("GNU_averaged_filtered_noise_spectrum.cdata", exp_refr, noise_NX, noise_NY, LX, LY); */
 #endif /* SCALES_FILTER */
 
-	memset (S_k, 0, NX_cr*NY*sizeof(fftw_complex));
+	memset (S_k, 0, NX_cr*NY*sizeof(complex_t));
 
 	for (i=0; i <= noise_NY_2; ++i)
 		for (j=0; j < noise_NX_cr; ++j) {

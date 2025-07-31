@@ -27,7 +27,7 @@ void read_data_params (char* f_name, unsigned long int *N_X, unsigned long int *
 	}
 }
 
-void read_data_complex (char* f_name, fftw_complex *output, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z) {
+void read_data_complex (char* f_name, complex_t *output, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z) {
 	unsigned long int elements_number;
 	FILE* f_p;
 
@@ -43,7 +43,7 @@ void read_data_complex (char* f_name, fftw_complex *output, unsigned long int *N
 	elements_number = fread (L_X, sizeof (double), 1, f_p);
 	elements_number = fread (L_Y, sizeof (double), 1, f_p);
 	elements_number = fread (z, sizeof (double), 1, f_p);
-	elements_number = fread (output, sizeof (fftw_complex), (*N_X)*(*N_Y), f_p);
+	elements_number = fread (output, sizeof (complex_t), (*N_X)*(*N_Y), f_p);
 
 	fclose (f_p);
 
@@ -53,7 +53,7 @@ void read_data_complex (char* f_name, fftw_complex *output, unsigned long int *N
 	}
 }
 
-void save_data_complex (char* f_name, fftw_complex *input, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z) {
+void save_data_complex (char* f_name, complex_t *input, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z) {
 	unsigned long int elements_number;
 	FILE* f_p;
 
@@ -69,7 +69,7 @@ void save_data_complex (char* f_name, fftw_complex *input, unsigned long int *N_
 	elements_number = fwrite (L_X, sizeof (unsigned long int), 1, f_p);
 	elements_number = fwrite (L_Y, sizeof (unsigned long int), 1, f_p);
 	elements_number = fwrite (z, sizeof (double), 1, f_p);
-	elements_number = fwrite (input, sizeof (fftw_complex), (*N_X)*(*N_Y), f_p);
+	elements_number = fwrite (input, sizeof (complex_t), (*N_X)*(*N_Y), f_p);
 
 	fclose(f_p);
 
@@ -79,7 +79,7 @@ void save_data_complex (char* f_name, fftw_complex *input, unsigned long int *N_
 	}
 }
 
-void read_data_cr (char* f_name, fftw_complex *output, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z) {
+void read_data_cr (char* f_name, complex_t *output, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z) {
 	unsigned long int elements_number, NX_cr;
 	FILE* f_p;
 
@@ -96,7 +96,7 @@ void read_data_cr (char* f_name, fftw_complex *output, unsigned long int *N_X, u
 	elements_number = fread (L_Y, sizeof (double), 1, f_p);
 	elements_number = fread (z, sizeof (double), 1, f_p);
 	NX_cr = (*N_X)/2+1;
-	elements_number = fread (output, sizeof (fftw_complex), NX_cr*(*N_Y), f_p);
+	elements_number = fread (output, sizeof (complex_t), NX_cr*(*N_Y), f_p);
 
 	fclose (f_p);
 
@@ -106,7 +106,7 @@ void read_data_cr (char* f_name, fftw_complex *output, unsigned long int *N_X, u
 	}
 }
 
-void save_data_cr (char* f_name, fftw_complex *input, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z) {
+void save_data_cr (char* f_name, complex_t *input, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z) {
 	unsigned long int elements_number, NX_cr;
 	FILE* f_p;
 
@@ -123,7 +123,7 @@ void save_data_cr (char* f_name, fftw_complex *input, unsigned long int *N_X, un
 	elements_number = fwrite (L_Y, sizeof (unsigned long int), 1, f_p);
 	elements_number = fwrite (z, sizeof (double), 1, f_p);
 	NX_cr = (*N_X)/2+1;
-	elements_number = fwrite (input, sizeof (fftw_complex), NX_cr*(*N_Y), f_p);
+	elements_number = fwrite (input, sizeof (complex_t), NX_cr*(*N_Y), f_p);
 
 	fclose(f_p);
 
@@ -133,7 +133,7 @@ void save_data_cr (char* f_name, fftw_complex *input, unsigned long int *N_X, un
 	}
 }
 
-void save_GNU_k_c (char* f_name, fftw_complex *input, unsigned long int NX, unsigned long int NY, double LX, double LY, int step) {
+void save_GNU_k_c (char* f_name, complex_t *input, unsigned long int NX, unsigned long int NY, double LX, double LY, int step) {
 	/* Saving harmonics for complex2complex (no symmetry) transform in GNU format */
         long int i, j, ij, flag = 0;
 	double delta_kx, delta_ky, kx, ky;
@@ -218,7 +218,7 @@ void save_GNU_k_c (char* f_name, fftw_complex *input, unsigned long int NX, unsi
         if (f_name != NULL) fclose(f_p);
 }
 
-void save_GNU_k_cr (char* f_name, fftw_complex *input, unsigned long int NX, unsigned long int NY, double LX, double LY, int step) {
+void save_GNU_k_cr (char* f_name, complex_t *input, unsigned long int NX, unsigned long int NY, double LX, double LY, int step) {
 	/* Saving harmonics for complex2real transform, i.e. with Hermitian symmetry, in GNU format */
         long int i, j, ij;
 	unsigned long int flag = 0, NX_cr = (NX/2+1);
@@ -342,7 +342,7 @@ void save_GNU_real_k_cr (char* f_name, double *input, unsigned long int NX, unsi
         if (f_name != NULL) fclose(f_p);
 }
 
-void angle_sqr_avrg_GNU_k_cr (char* f_name, fftw_complex *input, unsigned long int NX, unsigned long int NY, double LX, double LY) {
+void angle_sqr_avrg_GNU_k_cr (char* f_name, complex_t *input, unsigned long int NX, unsigned long int NY, double LX, double LY) {
 	/* Saving histogram for complex2real transform, i.e. with Hermitian symmetry, in GNU format */
         long int i, j, ij;
 	unsigned long int NX_cr = (NX/2+1), *norm_numbers, boxindex;
@@ -411,7 +411,7 @@ void angle_sqr_avrg_GNU_k_cr (char* f_name, fftw_complex *input, unsigned long i
         if (f_name != NULL) fclose(f_p);
 }
 
-void save_GNU_XY_c (char* f_name, fftw_complex *input, unsigned long int NX, unsigned long int NY, double LX, double LY, int step) {
+void save_GNU_XY_c (char* f_name, complex_t *input, unsigned long int NX, unsigned long int NY, double LX, double LY, int step) {
         long int i, j, ij, flag = 0;
 	double delta_x, delta_y, x, y, LX_2, LY_2;
 	FILE* f_p;
@@ -501,7 +501,7 @@ void save_GNU_XY_r (char* f_name, double *input, unsigned long int NX, unsigned 
         if (f_name != NULL) fclose(f_p);
 }
 
-void save_GNU_X_line_c (char* f_name, fftw_complex *input, unsigned long int NX, unsigned long int NY, double LX, double LY, double Y) {
+void save_GNU_X_line_c (char* f_name, complex_t *input, unsigned long int NX, unsigned long int NY, double LX, double LY, double Y) {
         unsigned long int j, ij, Y_index, index_offset;
 	double delta_x, LX_2, y;
 	FILE* f_p;
@@ -537,7 +537,7 @@ void save_GNU_X_line_c (char* f_name, fftw_complex *input, unsigned long int NX,
         if (f_name != NULL) fclose(f_p);
 }
 
-void save_point_complex_GNU (char* f_name, fftw_complex input, double index_value1, double index_value2) {
+void save_point_complex_GNU (char* f_name, complex_t input, double index_value1, double index_value2) {
 	FILE* f_p;
 	if ((f_p = fopen(f_name, "a")) == NULL) {
 		printf ("Can't open/create file %s!\n", f_name);

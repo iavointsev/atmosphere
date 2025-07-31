@@ -12,6 +12,9 @@ This is library for reading initial and saving data.
 #include <complex.h>
 #include <gsl/gsl_rng.h>
 
+typedef fftw_complex complex_t;
+
+
 typedef struct {
 	unsigned long int NX;
 	unsigned long int NY;
@@ -33,22 +36,22 @@ typedef struct {
 } ProblemConfig;
 
 void read_data_params (char* f_name, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z);
-void read_data_complex (char* f_name, fftw_complex *output, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z);
-void save_data_complex (char* f_name, fftw_complex *input, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z);
+void read_data_complex (char* f_name, complex_t *output, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z);
+void save_data_complex (char* f_name, complex_t *input, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z);
 
-void read_data_cr (char* f_name, fftw_complex *output, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z);
-void save_data_cr (char* f_name, fftw_complex *input, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z);
+void read_data_cr (char* f_name, complex_t *output, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z);
+void save_data_cr (char* f_name, complex_t *input, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z);
 
-void save_GNU_k_c (char* f_name, fftw_complex *input, unsigned long int NX, unsigned long int NY, double LX, double LY, int step);
-void save_GNU_k_cr (char* f_name, fftw_complex *input, unsigned long int NX, unsigned long int NY, double LX, double LY, int step);
+void save_GNU_k_c (char* f_name, complex_t *input, unsigned long int NX, unsigned long int NY, double LX, double LY, int step);
+void save_GNU_k_cr (char* f_name, complex_t *input, unsigned long int NX, unsigned long int NY, double LX, double LY, int step);
 void save_GNU_real_k_cr (char* f_name, double *input, unsigned long int NX, unsigned long int NY, double LX, double LY, int step);
-void save_GNU_XY_c (char* f_name, fftw_complex *input, unsigned long int NX, unsigned long int NY, double LX, double LY, int step);
+void save_GNU_XY_c (char* f_name, complex_t *input, unsigned long int NX, unsigned long int NY, double LX, double LY, int step);
 void save_GNU_XY_r (char* f_name, double *input, unsigned long int NX, unsigned long int NY, double LX, double LY, int step);
-void save_GNU_X_line_c (char* f_name, fftw_complex *input, unsigned long int NX, unsigned long int NY, double LX, double LY, double Y);
+void save_GNU_X_line_c (char* f_name, complex_t *input, unsigned long int NX, unsigned long int NY, double LX, double LY, double Y);
 
-void angle_sqr_avrg_GNU_k_cr (char* f_name, fftw_complex *input, unsigned long int NX, unsigned long int NY, double LX, double LY);
+void angle_sqr_avrg_GNU_k_cr (char* f_name, complex_t *input, unsigned long int NX, unsigned long int NY, double LX, double LY);
 
-void save_point_complex_GNU (char* f_name, fftw_complex input, double index_value1, double index_value2);
+void save_point_complex_GNU (char* f_name, complex_t input, double index_value1, double index_value2);
 void save_point_real_GNU (char* f_name, double input, double index_value1);
 
 void read_conf_file(char* f_name);

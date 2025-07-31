@@ -20,7 +20,7 @@ double max_intensity_value = 0.0;
 double delta_k_x, delta_k_y, Over_NX_NY, k_0;
 unsigned long int NX_NY, NX_NY_cr, noise_NX_NY_cr, NX_cr;
 
-fftw_complex *psi, *psi0, *psi_k, *xi, *exp_refr, *S_k, *exp_diffr;
+complex_t *psi, *psi0, *psi_k, *xi, *exp_refr, *S_k, *exp_diffr;
 double *abs_k_xy_cr, *Phi_k, *xi_k_mul, *S, *psi_abs_sqr, *intensity_maximums, Over_sqrt_delta_kx_delta_ky;
 fftw_plan plan_fwd, plan_bwd, plan_bwd_S_k;
 
@@ -95,7 +95,7 @@ int main (int argc, char** argv) {
 		exit(1);
 	}
 
-	memcpy (psi0, psi, NX_NY*sizeof(fftw_complex));
+	memcpy (psi0, psi, NX_NY*sizeof(complex_t));
 #ifdef SAVE_INITIAL_XY
 	save_GNU_XY_c ("GNU.initial_data_XY.cdata", psi, (NX), (NY), (LX), (LY), 10);
 #endif /* SAVE_INITIAL_XY */
@@ -146,7 +146,7 @@ int main (int argc, char** argv) {
 #endif /* MEAN_INTENSITY */
 
 	for (realization_current=0; realization_current < realizations_number; ++realization_current) {
-		memcpy (psi, psi0, NX_NY*sizeof(fftw_complex));
+		memcpy (psi, psi0, NX_NY*sizeof(complex_t));
 /*** calculations begin ***/
 		for (z_step = 0; z_step < step_number; ++z_step) {
 #ifdef VERBOSE

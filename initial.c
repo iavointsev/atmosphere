@@ -11,20 +11,20 @@ typedef enum
 } WaveProfile;
 
 // TODO: убрать в initial.h? или вообще убрать?
-static void generate_plane_wave(fftw_complex *restrict psi,
+static void generate_plane_wave(complex_t *restrict psi,
 								unsigned long int NX, unsigned long int NY,
 								double x_start, double y_start,
 								double dx, double dy,
 								double *psi_integral);
 
-static void generate_gauss_wave(fftw_complex *restrict psi,
+static void generate_gauss_wave(complex_t *restrict psi,
 								unsigned long int NX, unsigned long int NY,
 								double x_start, double y_start,
 								double dx, double dy,
 								double over_width_sqr,
 								double *psi_integral);
 
-fftw_complex *generate_wave(unsigned long int NX, unsigned long int NY,
+complex_t *generate_wave(unsigned long int NX, unsigned long int NY,
 							double LX, double LY, double w_0,
 							WaveProfile profile)
 {
@@ -34,7 +34,7 @@ fftw_complex *generate_wave(unsigned long int NX, unsigned long int NY,
 	const double y_start = -LY / 2.0;
 	const double over_width_sqr = (profile == GAUSS) ? 1.0 / (w_0 * w_0) : 0.0;
 
-	fftw_complex *psi = (fftw_complex *)fftw_malloc(NX * NY * sizeof(fftw_complex));
+	complex_t *psi = (complex_t *)fftw_malloc(NX * NY * sizeof(complex_t));
 	if (!psi)
 	{
 		fprintf(stderr, "Allocation (%lu x %lu) array failed\n", NX, NY);
@@ -63,7 +63,7 @@ fftw_complex *generate_wave(unsigned long int NX, unsigned long int NY,
 	return psi;
 }
 
-static void generate_gauss_wave(fftw_complex *restrict psi,
+static void generate_gauss_wave(complex_t *restrict psi,
 								unsigned long int NX, unsigned long int NY,
 								double x_start, double y_start,
 								double dx, double dy,
@@ -87,7 +87,7 @@ static void generate_gauss_wave(fftw_complex *restrict psi,
 	}
 }
 
-static void generate_plane_wave(fftw_complex *restrict psi,
+static void generate_plane_wave(complex_t *restrict psi,
 								unsigned long int NX, unsigned long int NY,
 								double x_start, double y_start,
 								double dx, double dy,
@@ -114,7 +114,7 @@ static void generate_plane_wave(fftw_complex *restrict psi,
 int main(int argc, char **argv)
 {
 	FILE *f_p;
-	fftw_complex *psi;
+	complex_t *psi;
 	/*Parsing command line.*/
 	if (argc < 3)
 	{
@@ -150,7 +150,7 @@ int main(int argc, char **argv)
 		   w_0 = config.w_0;
 
 	double distance = 0.0; // TODO: избавиться
-	fftw_complex *psi = generate_wave(NX, NY, LX, LY, w_0, profile);
+	complex_t *psi = generate_wave(NX, NY, LX, LY, w_0, profile);
 
 #ifdef SAVE_FILE_GNU
 	save_GNU_XY_c("GNU.reallY_initial_data_XY.cdata", psi, NX, NY, LX, LY, 4);
