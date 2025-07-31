@@ -6,7 +6,7 @@ Scaling of the c2r Fourier array.
 #include <unistd.h>
 #include <fftw3.h>
 #include <complex.h>
-#include "dataio.h"
+#include "utils.h"
 
 int main(int argc, char** argv) {
 	double z=0.0, LX=0.0, LY=0.0;

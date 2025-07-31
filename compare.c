@@ -7,7 +7,7 @@ compare two complex PSI arrays in XY plane.
 #include <unistd.h>
 #include <fftw3.h>
 #include <complex.h>
-#include "dataio.h"
+#include "utils.h"
 
 double L_infty_norm (fftw_complex *input, unsigned long int points_number) {
 	double max=0.0, current_abs_sqr;

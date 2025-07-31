@@ -10,7 +10,7 @@
 #include <gsl/gsl_rng.h>
 
 #include "my_thr_lib.h"
-#include "dataio.h"
+#include "utils.h"
 #include "histogram.h"
 #include "correlator.h"
 #include "mean_intensity.h"

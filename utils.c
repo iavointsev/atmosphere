@@ -2,7 +2,7 @@
 This is library for reading initial and saving final data.
 */
 
-#include "dataio.h"
+#include "utils.h"
 
 void read_data_params (char* f_name, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z) {
 	unsigned long int elements_number;

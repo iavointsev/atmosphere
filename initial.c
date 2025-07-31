@@ -1,6 +1,6 @@
 /*** Program for generation of initial conditions ***/
 
-#include "dataio.h"
+#include "utils.h"
 
 #define _SAVE_FILE_GNU
 

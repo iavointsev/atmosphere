@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <fftw3.h>
 #include <complex.h>
-#include "dataio.h"
+#include "utils.h"
 #include "filter.h" 
 
 

@@ -7,7 +7,7 @@
 
 /*** Program for analysis of saved data ***/
 
-#include "dataio.h"
+#include "utils.h"
 
 #define _SAVE_PSI_K
 #define SAVE_X_LINE

@@ -7,7 +7,7 @@
 #include <time.h>
 
 #include <complex.h>
-#include "dataio.h" 
+#include "utils.h" 
 #include "atmosphere.h"
 
 /* NX and NY should be even */
