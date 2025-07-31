@@ -11,8 +11,10 @@ This is library for reading initial and saving data.
 #include <fftw3.h>
 #include <complex.h>
 #include <gsl/gsl_rng.h>
+#include <unistd.h>
 
 typedef fftw_complex complex_t;
+typedef unsigned long int index_t;
 
 
 typedef struct {
@@ -37,7 +39,7 @@ typedef struct {
 
 void read_data_params (char* f_name, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z);
 void read_data_complex (char* f_name, complex_t *output, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z);
-void save_data_complex (char* f_name, complex_t *input, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z);
+void save_data_complex (char* f_name, complex_t input, unsigned long int N_X, unsigned long int N_Y, double L_X, double L_Y, double z);
 
 void read_data_cr (char* f_name, complex_t *output, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z);
 void save_data_cr (char* f_name, complex_t *input, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z);

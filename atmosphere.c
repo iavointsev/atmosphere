@@ -239,7 +239,7 @@ int main (int argc, char** argv) {
 	save_rng_state (name, my_rng_best_realization);
 #endif // MAX_INTENSITY_STAT
 
-	save_data_complex (argv[4], psi, &NX, &NY, &LX, &LY, &distance_current);
+	save_data_complex (argv[4], psi, NX, NY, LX, LY, distance_current);
 
 #ifdef SAVE_FINAL_K
 	save_GNU_k_c ("GNU.final_data_1024_k.cdata", psi_k, NX, NY, LX, LY, 1);

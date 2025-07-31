@@ -53,7 +53,7 @@ void read_data_complex (char* f_name, complex_t *output, unsigned long int *N_X,
 	}
 }
 
-void save_data_complex (char* f_name, complex_t *input, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z) {
+void save_data_complex (char* f_name, complex_t *input, unsigned long int N_X, unsigned long int N_Y, double L_X, double L_Y, double z) {
 	unsigned long int elements_number;
 	FILE* f_p;
 
