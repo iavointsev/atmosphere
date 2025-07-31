@@ -557,7 +557,7 @@ void save_point_real_GNU (char* f_name, double input, double index_value1) {
 	fclose(f_p);
 }
 
-ProblemConfig read_conf_file(char* f_nam) {
+ProblemConfig read_conf_file(const char* f_nam) {
 	FILE* f_p;
 	ProblemConfig = config;
 	char *buffer, *tok, *remainder;
