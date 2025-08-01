@@ -14,8 +14,6 @@ This is library for reading initial and saving data.
 #include <unistd.h>
 
 typedef fftw_complex complex_t;
-typedef unsigned long int index_t;
-
 
 typedef struct {
 	unsigned long int NX;
