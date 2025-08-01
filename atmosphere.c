@@ -7,7 +7,7 @@
 #include <time.h>
 
 #include <complex.h>
-#include "dataio.h" 
+#include "utils.h" 
 #include "atmosphere.h"
 
 /* NX and NY should be even */
@@ -20,7 +20,7 @@ double max_intensity_value = 0.0;
 double delta_k_x, delta_k_y, Over_NX_NY, k_0;
 unsigned long int NX_NY, NX_NY_cr, noise_NX_NY_cr, NX_cr;
 
-fftw_complex *psi, *psi0, *psi_k, *xi, *exp_refr, *S_k, *exp_diffr;
+complex_t *psi, *psi0, *psi_k, *xi, *exp_refr, *S_k, *exp_diffr;
 double *abs_k_xy_cr, *Phi_k, *xi_k_mul, *S, *psi_abs_sqr, *intensity_maximums, Over_sqrt_delta_kx_delta_ky;
 fftw_plan plan_fwd, plan_bwd, plan_bwd_S_k;
 
@@ -42,6 +42,18 @@ char file_name[256];
 #include "arrays_calc.c"
 #include "arrays_init.c"
 
+// отвратительно, но пока что так
+static void unpack_config(ProblemConfig config, size_t *NX, size_t *NY, size_t *noise_NX, size_t *noise_NY,
+						  double *LX, double *LY, double *delta_z, double *lambda_0, double *n_0, double *C_n_sqr,
+						  double *w_0, double *l_0, double *L_0, size_t *realizations_number, size_t *realizations_save_step,
+						  double *max_intensity_value, size_t *N_BINS)
+{
+	*NX = config.NX; *NY = config.NY; *noise_NX = config.noise_NX; *noise_NY = config.noise_NY;
+	*LX = config.LX; *LY = config.LY; *delta_z = config.delta_z; *lambda_0 = config.lambda_0;
+	*n_0 = config.n_0; *C_n_sqr = config.C_n_sqr; *w_0 = config.w_0; *l_0 = config.l_0;
+	*L_0 = config.L_0; *realizations_number = config.realizations_number; *realizations_save_step = config.realizations_save_step; 
+	*max_intensity_value = config.max_intensity_value; *N_BINS = config.N_BINS;
+}
 
 int main (int argc, char** argv) {
 	char name[256], name2[256], ext[256], temp_char[256];
@@ -57,7 +69,10 @@ int main (int argc, char** argv) {
 		exit (1);
 	}
 
-	read_conf_file (argv[1], &NX, &NY, &noise_NX, &noise_NY, &LX, &LY, &delta_z, &lambda_0, &n_0, &C_n_sqr, &w_0, &l_0, &L_0, &realizations_number, &realizations_save_step, &max_intensity_value, &N_BINS);
+	const ProblemConfig config = read_config(argv[1]);
+	unpack_config(config, &NX, &NY, &noise_NX, &noise_NY, &LX, &LY, &delta_z, &lambda_0, &n_0, &C_n_sqr, &w_0, &l_0, &L_0, 
+		&realizations_number, &realizations_save_step, &max_intensity_value, &N_BINS);
+
 #ifdef SCALES_FILTER
 	k_mask_smallest_sqr = double_M_PI/L_0;
 	k_mask_smallest_sqr *= k_mask_smallest_sqr; /* To make squared k */
@@ -95,7 +110,7 @@ int main (int argc, char** argv) {
 		exit(1);
 	}
 
-	memcpy (psi0, psi, NX_NY*sizeof(fftw_complex));
+	memcpy (psi0, psi, NX_NY*sizeof(complex_t));
 #ifdef SAVE_INITIAL_XY
 	save_GNU_XY_c ("GNU.initial_data_XY.cdata", psi, (NX), (NY), (LX), (LY), 10);
 #endif /* SAVE_INITIAL_XY */
@@ -146,7 +161,7 @@ int main (int argc, char** argv) {
 #endif /* MEAN_INTENSITY */
 
 	for (realization_current=0; realization_current < realizations_number; ++realization_current) {
-		memcpy (psi, psi0, NX_NY*sizeof(fftw_complex));
+		memcpy (psi, psi0, NX_NY*sizeof(complex_t));
 /*** calculations begin ***/
 		for (z_step = 0; z_step < step_number; ++z_step) {
 #ifdef VERBOSE
@@ -239,7 +254,7 @@ int main (int argc, char** argv) {
 	save_rng_state (name, my_rng_best_realization);
 #endif // MAX_INTENSITY_STAT
 
-	save_data_complex (argv[4], psi, &NX, &NY, &LX, &LY, &distance_current);
+	save_data_complex (argv[4], psi, NX, NY, LX, LY, distance_current);
 
 #ifdef SAVE_FINAL_K
 	save_GNU_k_c ("GNU.final_data_1024_k.cdata", psi_k, NX, NY, LX, LY, 1);

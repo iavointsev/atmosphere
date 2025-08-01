@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <fftw3.h>
 #include <complex.h>
-#include "dataio.h"
+#include "utils.h"
 #include "filter.h" 
 
 
@@ -35,7 +35,7 @@ void correlator_ctor(correlator_t *correlator, unsigned long int NX)
     }
 }
 
-void correlator_collect_statistics(correlator_t *correlator, fftw_complex *psi, unsigned long int NX)
+void correlator_collect_statistics(correlator_t *correlator, complex_t *psi, unsigned long int NX)
 {
     unsigned long int ind_initial, ind_final, N_2;
     unsigned long int R, r, R_r_x, R_r_y, R_r;
@@ -77,7 +77,7 @@ void correlator_collect_statistics(correlator_t *correlator, fftw_complex *psi, 
 }
 
 /*
-void correlator_collect_statistics(correlator_t *correlator, fftw_complex *psi, unsigned long int NX)
+void correlator_collect_statistics(correlator_t *correlator, complex_t *psi, unsigned long int NX)
 {
     unsigned long int ind_initial, ind_final, N_points = NX * NX, N_2 = NX / 2;
     unsigned long int R, r, R_r_x, R_r_y, R_r;

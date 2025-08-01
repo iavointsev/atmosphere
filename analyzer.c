@@ -7,7 +7,7 @@
 
 /*** Program for analysis of saved data ***/
 
-#include "dataio.h"
+#include "utils.h"
 
 #define _SAVE_PSI_K
 #define SAVE_X_LINE
@@ -15,7 +15,7 @@
 int main (int argc, char** argv) {
 	
 	char file_name[256], name[256], ext[256];
-	fftw_complex *input, *temp_ptr1;
+	complex_t *input, *temp_ptr1;
 	double LX=0.0, LY=0.0, z=0.0, over_N, delta_x;
 	unsigned long int i, NX=0, NY=0, save_grid_step=0.0;
 	
@@ -33,7 +33,7 @@ int main (int argc, char** argv) {
 	strcpy(ext,strtok(NULL,"."));
 
 	read_data_params (argv[1], &NX, &NY, &LX, &LY, &z);
-	input = (fftw_complex*) fftw_malloc ((NX)*(NY)*sizeof(fftw_complex));
+	input = (complex_t*) fftw_malloc ((NX)*(NY)*sizeof(complex_t));
 
 	if ( strcmp(ext, "cdata") == 0) {
 #ifdef VERBOSE

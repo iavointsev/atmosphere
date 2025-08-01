@@ -2,7 +2,7 @@
 This is library for reading initial and saving final data.
 */
 
-#include "dataio.h"
+#include "utils.h"
 
 void read_data_params (char* f_name, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z) {
 	unsigned long int elements_number;
@@ -27,7 +27,7 @@ void read_data_params (char* f_name, unsigned long int *N_X, unsigned long int *
 	}
 }
 
-void read_data_complex (char* f_name, fftw_complex *output, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z) {
+void read_data_complex (char* f_name, complex_t *output, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z) {
 	unsigned long int elements_number;
 	FILE* f_p;
 
@@ -43,7 +43,7 @@ void read_data_complex (char* f_name, fftw_complex *output, unsigned long int *N
 	elements_number = fread (L_X, sizeof (double), 1, f_p);
 	elements_number = fread (L_Y, sizeof (double), 1, f_p);
 	elements_number = fread (z, sizeof (double), 1, f_p);
-	elements_number = fread (output, sizeof (fftw_complex), (*N_X)*(*N_Y), f_p);
+	elements_number = fread (output, sizeof (complex_t), (*N_X)*(*N_Y), f_p);
 
 	fclose (f_p);
 
@@ -53,7 +53,7 @@ void read_data_complex (char* f_name, fftw_complex *output, unsigned long int *N
 	}
 }
 
-void save_data_complex (char* f_name, fftw_complex *input, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z) {
+void save_data_complex (char* f_name, complex_t *input, unsigned long int N_X, unsigned long int N_Y, double L_X, double L_Y, double z) {
 	unsigned long int elements_number;
 	FILE* f_p;
 
@@ -69,7 +69,7 @@ void save_data_complex (char* f_name, fftw_complex *input, unsigned long int *N_
 	elements_number = fwrite (L_X, sizeof (unsigned long int), 1, f_p);
 	elements_number = fwrite (L_Y, sizeof (unsigned long int), 1, f_p);
 	elements_number = fwrite (z, sizeof (double), 1, f_p);
-	elements_number = fwrite (input, sizeof (fftw_complex), (*N_X)*(*N_Y), f_p);
+	elements_number = fwrite (input, sizeof (complex_t), (*N_X)*(*N_Y), f_p);
 
 	fclose(f_p);
 
@@ -79,7 +79,7 @@ void save_data_complex (char* f_name, fftw_complex *input, unsigned long int *N_
 	}
 }
 
-void read_data_cr (char* f_name, fftw_complex *output, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z) {
+void read_data_cr (char* f_name, complex_t *output, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z) {
 	unsigned long int elements_number, NX_cr;
 	FILE* f_p;
 
@@ -96,7 +96,7 @@ void read_data_cr (char* f_name, fftw_complex *output, unsigned long int *N_X, u
 	elements_number = fread (L_Y, sizeof (double), 1, f_p);
 	elements_number = fread (z, sizeof (double), 1, f_p);
 	NX_cr = (*N_X)/2+1;
-	elements_number = fread (output, sizeof (fftw_complex), NX_cr*(*N_Y), f_p);
+	elements_number = fread (output, sizeof (complex_t), NX_cr*(*N_Y), f_p);
 
 	fclose (f_p);
 
@@ -106,7 +106,7 @@ void read_data_cr (char* f_name, fftw_complex *output, unsigned long int *N_X, u
 	}
 }
 
-void save_data_cr (char* f_name, fftw_complex *input, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z) {
+void save_data_cr (char* f_name, complex_t *input, unsigned long int *N_X, unsigned long int *N_Y, double *L_X, double *L_Y, double *z) {
 	unsigned long int elements_number, NX_cr;
 	FILE* f_p;
 
@@ -123,7 +123,7 @@ void save_data_cr (char* f_name, fftw_complex *input, unsigned long int *N_X, un
 	elements_number = fwrite (L_Y, sizeof (unsigned long int), 1, f_p);
 	elements_number = fwrite (z, sizeof (double), 1, f_p);
 	NX_cr = (*N_X)/2+1;
-	elements_number = fwrite (input, sizeof (fftw_complex), NX_cr*(*N_Y), f_p);
+	elements_number = fwrite (input, sizeof (complex_t), NX_cr*(*N_Y), f_p);
 
 	fclose(f_p);
 
@@ -133,7 +133,7 @@ void save_data_cr (char* f_name, fftw_complex *input, unsigned long int *N_X, un
 	}
 }
 
-void save_GNU_k_c (char* f_name, fftw_complex *input, unsigned long int NX, unsigned long int NY, double LX, double LY, int step) {
+void save_GNU_k_c (char* f_name, complex_t *input, unsigned long int NX, unsigned long int NY, double LX, double LY, int step) {
 	/* Saving harmonics for complex2complex (no symmetry) transform in GNU format */
         long int i, j, ij, flag = 0;
 	double delta_kx, delta_ky, kx, ky;
@@ -218,7 +218,7 @@ void save_GNU_k_c (char* f_name, fftw_complex *input, unsigned long int NX, unsi
         if (f_name != NULL) fclose(f_p);
 }
 
-void save_GNU_k_cr (char* f_name, fftw_complex *input, unsigned long int NX, unsigned long int NY, double LX, double LY, int step) {
+void save_GNU_k_cr (char* f_name, complex_t *input, unsigned long int NX, unsigned long int NY, double LX, double LY, int step) {
 	/* Saving harmonics for complex2real transform, i.e. with Hermitian symmetry, in GNU format */
         long int i, j, ij;
 	unsigned long int flag = 0, NX_cr = (NX/2+1);
@@ -342,7 +342,7 @@ void save_GNU_real_k_cr (char* f_name, double *input, unsigned long int NX, unsi
         if (f_name != NULL) fclose(f_p);
 }
 
-void angle_sqr_avrg_GNU_k_cr (char* f_name, fftw_complex *input, unsigned long int NX, unsigned long int NY, double LX, double LY) {
+void angle_sqr_avrg_GNU_k_cr (char* f_name, complex_t *input, unsigned long int NX, unsigned long int NY, double LX, double LY) {
 	/* Saving histogram for complex2real transform, i.e. with Hermitian symmetry, in GNU format */
         long int i, j, ij;
 	unsigned long int NX_cr = (NX/2+1), *norm_numbers, boxindex;
@@ -411,7 +411,7 @@ void angle_sqr_avrg_GNU_k_cr (char* f_name, fftw_complex *input, unsigned long i
         if (f_name != NULL) fclose(f_p);
 }
 
-void save_GNU_XY_c (char* f_name, fftw_complex *input, unsigned long int NX, unsigned long int NY, double LX, double LY, int step) {
+void save_GNU_XY_c (char* f_name, complex_t *input, unsigned long int NX, unsigned long int NY, double LX, double LY, int step) {
         long int i, j, ij, flag = 0;
 	double delta_x, delta_y, x, y, LX_2, LY_2;
 	FILE* f_p;
@@ -501,7 +501,7 @@ void save_GNU_XY_r (char* f_name, double *input, unsigned long int NX, unsigned 
         if (f_name != NULL) fclose(f_p);
 }
 
-void save_GNU_X_line_c (char* f_name, fftw_complex *input, unsigned long int NX, unsigned long int NY, double LX, double LY, double Y) {
+void save_GNU_X_line_c (char* f_name, complex_t *input, unsigned long int NX, unsigned long int NY, double LX, double LY, double Y) {
         unsigned long int j, ij, Y_index, index_offset;
 	double delta_x, LX_2, y;
 	FILE* f_p;
@@ -537,7 +537,7 @@ void save_GNU_X_line_c (char* f_name, fftw_complex *input, unsigned long int NX,
         if (f_name != NULL) fclose(f_p);
 }
 
-void save_point_complex_GNU (char* f_name, fftw_complex input, double index_value1, double index_value2) {
+void save_point_complex_GNU (char* f_name, complex_t input, double index_value1, double index_value2) {
 	FILE* f_p;
 	if ((f_p = fopen(f_name, "a")) == NULL) {
 		printf ("Can't open/create file %s!\n", f_name);
@@ -557,8 +557,9 @@ void save_point_real_GNU (char* f_name, double input, double index_value1) {
 	fclose(f_p);
 }
 
-void read_conf_file (char* f_name, unsigned long int *NX, unsigned long int *NY, unsigned long int *noise_NX, unsigned long int *noise_NY, double *LX, double *LY, double *delta_z, double *lambda_0, double *n_0, double *C_n_sqr, double *w_0, double *l_0, double *L_0, unsigned long int *realizations_number, unsigned long int *realizations_save_step, double *max_intensity_value, unsigned long int *N_BINS) {
+ProblemConfig read_config(const char* f_nam) {
 	FILE* f_p;
+	ProblemConfig = config;
 	char *buffer, *tok, *remainder;
 	unsigned long int buffer_size=256;
 
@@ -575,73 +576,99 @@ void read_conf_file (char* f_name, unsigned long int *NX, unsigned long int *NY,
 		if ((tok = strsep(&remainder, "=")) != NULL) {
 			if ((tok != NULL) && (remainder != NULL)) {
 				if (!strcmp(tok,"NX")) {
-					sscanf(remainder, "%lu", NX);
-					printf ("NX=%lu\n", *NX);
+					sscanf(remainder, "%lu", &config.NX);
+					printf("NX=%lu\n", config.NX);
 				} else if (!strcmp(tok,"NY")) {
-					sscanf(remainder, "%lu", NY);
-					printf ("NY=%lu\n", *NY);
+					sscanf(remainder, "%lu", &config.NY);
+					printf("NY=%lu\n", config.NY);
 				} else if (!strcmp(tok,"noise_NX")) {
-					sscanf(remainder, "%lu", noise_NX);
-					printf ("noise_NX=%lu\n", *noise_NX);
+					sscanf(remainder, "%lu", &config.noise_NX);
+					printf("noise_NX=%lu\n", config.noise_NX);
 				} else if (!strcmp(tok,"noise_NY")) {
-					sscanf(remainder, "%lu", noise_NY);
-					printf ("noise_NY=%lu\n", *noise_NY);
+					sscanf(remainder, "%lu", &config.noise_NY);
+					printf("noise_NY=%lu\n", config.noise_NY);
 				} else if (!strcmp(tok,"LX")) {
-					sscanf(remainder, "%le", LX);
-					printf ("LX=%.6e\n", *LX);
+					sscanf(remainder, "%le", &config.LX);
+					printf("LX=%.6e\n", config.LX);
 				} else if (!strcmp(tok,"LY")) {
-					sscanf(remainder, "%le", LY);
-					printf ("LY=%.6e\n", *LY);
+					sscanf(remainder, "%le", &config.LY);
+					printf("LY=%.6e\n", config.LY);
 				} else if (!strcmp(tok,"delta_z")) {
-					sscanf(remainder, "%le", delta_z);
-					printf ("delta_z=%.6e\n", *delta_z);
+					sscanf(remainder, "%le", &config.delta_z);
+					printf("delta_z=%.6e\n", config.delta_z);
 				} else if (!strcmp(tok,"lambda_0")) {
-					sscanf(remainder, "%le", lambda_0);
-					printf ("lambda_0=%.6e\n", *lambda_0);
+					sscanf(remainder, "%le", &config.lambda_0);
+					printf("lambda_0=%.6e\n", config.lambda_0);
 				} else if (!strcmp(tok,"n_0")) {
-					sscanf(remainder, "%le", n_0);
-					printf ("n_0=%.6e\n", *n_0);
+					sscanf(remainder, "%le", &config.n_0);
+					printf("n_0=%.6e\n", config.n_0);
 				} else if (!strcmp(tok,"C_n_sqr")) {
-					sscanf(remainder, "%le", C_n_sqr);
-					printf ("C_n_sqr=%.6e\n", *C_n_sqr);
+					sscanf(remainder, "%le", &config.C_n_sqr);
+					printf("C_n_sqr=%.6e\n", config.C_n_sqr);
 				} else if (!strcmp(tok,"w_0")) {
-					sscanf(remainder, "%le", w_0);
-					printf ("w_0=%.6e\n", *w_0);
+					sscanf(remainder, "%le", &config.w_0);
+					printf("w_0=%.6e\n", config.w_0);
 				} else if (!strcmp(tok,"l_0")) {
-					sscanf(remainder, "%le", l_0);
-					printf ("l_0=%.6e\n", *l_0);
+					sscanf(remainder, "%le", &config.l_0);
+					printf("l_0=%.6e\n", config.l_0);
 				} else if (!strcmp(tok,"L_0")) {
-					sscanf(remainder, "%le", L_0);
-					printf ("L_0=%.6e\n", *L_0);
+					sscanf(remainder, "%le", &config.L_0);
+					printf("L_0=%.6e\n", config.L_0);
 				} else if (!strcmp(tok,"realizations_number")) {
-					sscanf(remainder, "%lu", realizations_number);
-					printf ("realizations_number=%lu\n", *realizations_number);
+					sscanf(remainder, "%lu", &config.realizations_number);
+					printf("realizations_number=%lu\n", config.realizations_number);
 				} else if (!strcmp(tok,"realizations_save_step")) {
-					sscanf(remainder, "%lu", realizations_save_step);
-					printf ("realizations_save_step=%lu\n", *realizations_save_step);
+					sscanf(remainder, "%lu", &config.realizations_save_step);
+					printf("realizations_save_step=%lu\n", config.realizations_save_step);
 				} else if (!strcmp(tok,"max_intensity_value")) {
-					sscanf(remainder, "%le", max_intensity_value);
-					printf ("max_intensity_value=%.6e\n", *max_intensity_value);
+					sscanf(remainder, "%le", &config.max_intensity_value);
+					printf("max_intensity_value=%.6e\n", config.max_intensity_value);
 				} else if (!strcmp(tok,"N_BINS")) {
-					sscanf(remainder, "%lu", N_BINS);
-					printf ("N_BINS=%lu\n", *N_BINS);
+					sscanf(remainder, "%lu", &config.N_BINS);
+					printf("N_BINS=%lu\n", config.N_BINS);
 				} else {
-					printf ("Variable \"%s\" is not known.\n", tok);
+					printf("Variable \"%s\" is not known.\n", tok);
 				}
 			} else {
-				printf ("%s", tok);
+				printf("%s", tok);
 			}
 		}
 	}
 
 	fflush(stdout);
-	if (!((*NX)*(*NY)*(*noise_NX)*(*noise_NY)*(*LX)*(*LY)*(*delta_z)*(*lambda_0)*(*n_0)*(*C_n_sqr)*(*w_0)*(*max_intensity_value))) {
-		printf ("Something wrong: one or more variables are zeros! Exiting...\n");
-		exit(1);
-	}
+	validate_config(&config)
 
 	free(buffer);
 	fclose(f_p);
+
+	return config;
+}
+
+// Просто жесть...
+void validate_config(ProblemConfig *config) {
+	// config->w_0  может быть не задан, если не гаусс
+	// config-> realizations_save_step может быть не задан, не нужен
+	int is_valid =  
+		(
+			config->NX * config->NY *
+			config->LX * config->LY *
+			config->noise_NX * config-> noise_NY *
+			config-> realizations_number * config-> N_BINS != 0
+		) *
+		(
+			(config-> delta_z > 0) *
+			(config->lambda_0 > 0) *
+			(config-> n_0 > 0) *
+			(config->C_n_sqr > 0) *
+			(config->l_0 > 0)  *
+			(config->L_0 > 0) *
+			(config->max_intensity_value > 0) != 0
+		);
+
+	if (!is_valid) {
+		printf ("Something wrong: one or more variables are zeros! Exiting...\n");
+		exit(1);
+	}
 }
 
 void read_rng_state (char *f_name, gsl_rng *rng) {

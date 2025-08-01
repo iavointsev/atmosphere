@@ -12,20 +12,20 @@ all: atmosphere initial analyzer stretch compare
 %.o: %.c 
 	$(CC) -c $(CFLAGS) -o $@ $<
 
-atmosphere: atmosphere.o dataio.o my_thr_lib.o histogram.o filter.o correlator.o mean_intensity.o
-	$(CC) -Wall -o $@ atmosphere.o my_thr_lib.o dataio.o histogram.o filter.o correlator.o mean_intensity.o $(LDFLAGS)
+atmosphere: atmosphere.o utils.o my_thr_lib.o histogram.o filter.o correlator.o mean_intensity.o
+	$(CC) -Wall -o $@ atmosphere.o my_thr_lib.o utils.o histogram.o filter.o correlator.o mean_intensity.o $(LDFLAGS)
 
-analyzer: analyzer.o dataio.o my_thr_lib.o 
-	$(CC) -Wall -o $@ analyzer.o my_thr_lib.o dataio.o $(LDFLAGS)
+analyzer: analyzer.o utils.o my_thr_lib.o 
+	$(CC) -Wall -o $@ analyzer.o my_thr_lib.o utils.o $(LDFLAGS)
 
-initial: initial.o dataio.o my_thr_lib.o histogram.o filter.o correlator.o mean_intensity.o
-	$(CC) -Wall -o $@ initial.o my_thr_lib.o dataio.o $(LDFLAGS)
+initial: initial.o utils.o my_thr_lib.o histogram.o filter.o correlator.o mean_intensity.o
+	$(CC) -Wall -o $@ initial.o my_thr_lib.o utils.o $(LDFLAGS)
 
-stretch: stretch.o dataio.o 
-	$(CC) -Wall -o $@ stretch.o dataio.o $(LDFLAGS)
+stretch: stretch.o utils.o 
+	$(CC) -Wall -o $@ stretch.o utils.o $(LDFLAGS)
 
-compare: compare.o dataio.o 
-	$(CC) -Wall -o $@ compare.o dataio.o $(LDFLAGS)
+compare: compare.o utils.o 
+	$(CC) -Wall -o $@ compare.o utils.o $(LDFLAGS)
 
 clean: 
 	rm -f *.o 

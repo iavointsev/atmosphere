@@ -12,8 +12,8 @@ struct cexp_I_real_calc_thread_input *thr_cexp_I_real_calc;
 struct S_k_calc_thread_input *thr_S_k_calc;
 struct rng_pairs_calc_thread_input *thr_rng_pairs_calc;
 
-void mul_arrays_third_equal_first_by_second (fftw_complex *first, fftw_complex *second, fftw_complex *third, unsigned long int points_number) {
-	fftw_complex *temp_ptr1, *temp_ptr2, *temp_ptr3;
+void mul_arrays_third_equal_first_by_second (complex_t *first, complex_t *second, complex_t *third, unsigned long int points_number) {
+	complex_t *temp_ptr1, *temp_ptr2, *temp_ptr3;
 	unsigned long int i;
 
 	temp_ptr1 = first;
@@ -57,7 +57,7 @@ void mul_arrays_third_equal_first_by_second (fftw_complex *first, fftw_complex *
 
 void mul_arrays_third_equal_first_by_second_thr (void *thr_input) {
 	unsigned long int i, my_start_index;
-	fftw_complex *temp_ptr1, *temp_ptr2, *temp_ptr3;
+	complex_t *temp_ptr1, *temp_ptr2, *temp_ptr3;
 
 	struct mul_array_third_equal_first_by_second_thread_input *input;
 
@@ -74,8 +74,8 @@ void mul_arrays_third_equal_first_by_second_thr (void *thr_input) {
 	}
 }
 
-void mul_arrays_inplace_first_by_second (fftw_complex *first, fftw_complex *second, unsigned long int points_number) {
-	fftw_complex *temp_ptr1, *temp_ptr2;
+void mul_arrays_inplace_first_by_second (complex_t *first, complex_t *second, unsigned long int points_number) {
+	complex_t *temp_ptr1, *temp_ptr2;
 	double temp_re;
 	unsigned long int i;
 
@@ -119,7 +119,7 @@ void mul_arrays_inplace_first_by_second (fftw_complex *first, fftw_complex *seco
 void mul_arrays_inplace_first_by_second_thr (void *thr_input) {
 	unsigned long int i, my_start_index;
 	double temp_re;
-	fftw_complex *temp_ptr1, *temp_ptr2;
+	complex_t *temp_ptr1, *temp_ptr2;
 	struct mul_arrays_inplace_first_by_second_thread_input *input;
 
 	input = (struct mul_arrays_inplace_first_by_second_thread_input*) thr_input;
@@ -136,8 +136,8 @@ void mul_arrays_inplace_first_by_second_thr (void *thr_input) {
 	}
 }
 
-void mul_arrays_inplace_first_by_real_second (fftw_complex *first, double *second, unsigned long int points_number) {
-	fftw_complex *temp_ptr1;
+void mul_arrays_inplace_first_by_real_second (complex_t *first, double *second, unsigned long int points_number) {
+	complex_t *temp_ptr1;
 	double *temp_ptr2;
 	unsigned long int i;
 
@@ -179,7 +179,7 @@ void mul_arrays_inplace_first_by_real_second (fftw_complex *first, double *secon
 
 void mul_arrays_inplace_first_by_real_second_thr (void *thr_input) {
 	unsigned long int i, my_start_index;
-	fftw_complex *temp_ptr1;
+	complex_t *temp_ptr1;
 	double *temp_ptr2;
 	struct mul_arrays_inplace_first_by_real_second_thread_input *input;
 
@@ -196,8 +196,8 @@ void mul_arrays_inplace_first_by_real_second_thr (void *thr_input) {
 	}
 }
 
-void mul_array_inplace_by_real_number (fftw_complex *array, double coeff, unsigned long int points_number) {
-	fftw_complex *temp_ptr1;
+void mul_array_inplace_by_real_number (complex_t *array, double coeff, unsigned long int points_number) {
+	complex_t *temp_ptr1;
 	unsigned long int i;
 
 #ifndef THREADS_NUMBER
@@ -237,7 +237,7 @@ void mul_array_inplace_by_real_number (fftw_complex *array, double coeff, unsign
 
 void mul_array_inplace_by_real_number_thr (void *thr_input) {
 	unsigned long int i, my_start_index;
-	fftw_complex *temp_ptr1;
+	complex_t *temp_ptr1;
 	double factor;
 	struct mul_array_inplace_by_real_number_thread_input *input;
 
@@ -254,9 +254,9 @@ void mul_array_inplace_by_real_number_thr (void *thr_input) {
 	}
 }
 
-double L_2_norm (fftw_complex *input, unsigned long int points_number) {
+double L_2_norm (complex_t *input, unsigned long int points_number) {
 	unsigned long int i;
-	fftw_complex *temp_ptr1;
+	complex_t *temp_ptr1;
 	double result=0.0;
 
 #ifndef THREADS_NUMBER
@@ -298,7 +298,7 @@ double L_2_norm (fftw_complex *input, unsigned long int points_number) {
 
 void L_2_norm_thr (void * input_thr) {
 	struct L_2_norm_thread_input *input;
-	fftw_complex *temp_ptr1;
+	complex_t *temp_ptr1;
 	unsigned long int i;
 
 	input = (struct L_2_norm_thread_input *) input_thr;
@@ -312,9 +312,9 @@ void L_2_norm_thr (void * input_thr) {
 	}
 }
 
-void arrays_transpose (fftw_complex *input, fftw_complex *output, unsigned long int row_elements_N, unsigned long int column_elements_M) {
+void arrays_transpose (complex_t *input, complex_t *output, unsigned long int row_elements_N, unsigned long int column_elements_M) {
 	unsigned long int row_blocks_number, column_blocks_number, total_number_of_blocks, i,j, row_block_skip, column_block_skip;
-	fftw_complex *block_ptr_in, *block_ptr_out;
+	complex_t *block_ptr_in, *block_ptr_out;
 
 /*** We suppose that row_elements_N and column_elements_M are multiples of BLOCK_SIDE_SIZE ***/
 	row_blocks_number = row_elements_N/(BLOCK_SIDE_SIZE);
@@ -380,8 +380,8 @@ void arrays_transpose_thr (void * input_thr) {
 	}
 }
 
-void unit_transpose (fftw_complex *input, fftw_complex *output, unsigned long int current_block, unsigned long int row_elements_N, unsigned long int column_elements_M, unsigned long int row_blocks_number, unsigned long int column_blocks_number, unsigned long int row_block_skip, unsigned long int column_block_skip) {
-	fftw_complex *block_input, *block_output, *temp_ptr_in, *temp_ptr_out;
+void unit_transpose (complex_t *input, complex_t *output, unsigned long int current_block, unsigned long int row_elements_N, unsigned long int column_elements_M, unsigned long int row_blocks_number, unsigned long int column_blocks_number, unsigned long int row_block_skip, unsigned long int column_block_skip) {
+	complex_t *block_input, *block_output, *temp_ptr_in, *temp_ptr_out;
 	unsigned long int i, j;
 
 	j = (unsigned long int) (current_block/row_blocks_number);
@@ -403,9 +403,9 @@ void unit_transpose (fftw_complex *input, fftw_complex *output, unsigned long in
 	}
 }
 
-void abs_sqr_cdata (fftw_complex *input, double *output, unsigned long int points_number) {
+void abs_sqr_cdata (complex_t *input, double *output, unsigned long int points_number) {
 	unsigned long int i;
-	fftw_complex *temp_ptr1;
+	complex_t *temp_ptr1;
 	double *temp_ptr_r;
 
 #ifndef THREADS_NUMBER
@@ -445,7 +445,7 @@ void abs_sqr_cdata (fftw_complex *input, double *output, unsigned long int point
 
 void abs_sqr_cdata_thr (void * input_thr) {
 	struct abs_sqr_cdata_thread_input *input;
-	fftw_complex *temp_ptr1;
+	complex_t *temp_ptr1;
 	double *temp_ptr_r;
 	unsigned long int i;
 
@@ -460,9 +460,9 @@ void abs_sqr_cdata_thr (void * input_thr) {
 	}
 }
 
-void cexp_I_real_calc (double *input, fftw_complex *output, unsigned long int points_number) {
+void cexp_I_real_calc (double *input, complex_t *output, unsigned long int points_number) {
 	unsigned long int i;
-	fftw_complex *temp_ptr1;
+	complex_t *temp_ptr1;
 	double *temp_ptr_r;
 	complex double exp_i_S;
 
@@ -505,7 +505,7 @@ void cexp_I_real_calc (double *input, fftw_complex *output, unsigned long int po
 
 void cexp_I_real_calc_thr (void * input_thr) {
 	struct cexp_I_real_calc_thread_input *input;
-	fftw_complex *temp_ptr1;
+	complex_t *temp_ptr1;
 	double *temp_ptr_r;
 	complex double exp_i_S;
 	unsigned long int i;
@@ -525,8 +525,8 @@ void cexp_I_real_calc_thr (void * input_thr) {
 
 /* Some specific operations for our atmosphere code */
 
-void S_k_calc (fftw_complex *rng_pairs, fftw_complex *output) {
-	fftw_complex *temp_ptr1, *temp_ptr2;
+void S_k_calc (complex_t *rng_pairs, complex_t *output) {
+	complex_t *temp_ptr1, *temp_ptr2;
 	double *temp_ptr_r;
 	unsigned long int i;
 	complex double xi;
@@ -571,7 +571,7 @@ void S_k_calc (fftw_complex *rng_pairs, fftw_complex *output) {
 }
 
 void S_k_calc_thr (void *thr_input) {
-	fftw_complex *temp_ptr1, *temp_ptr2;
+	complex_t *temp_ptr1, *temp_ptr2;
 	double *temp_ptr_r;
 	unsigned long int i;
 	complex double xi;
@@ -595,9 +595,9 @@ void S_k_calc_thr (void *thr_input) {
 }
 
 
-void rng_pairs_calc (fftw_complex *output, unsigned long int pairs_number) {
+void rng_pairs_calc (complex_t *output, unsigned long int pairs_number) {
 	unsigned long int i;
-	fftw_complex *temp_ptr1;
+	complex_t *temp_ptr1;
 
 	gsl_rng_memcpy (my_rng_current_realization, my_rng);
 #ifndef THREADS_NUMBER
@@ -634,7 +634,7 @@ void rng_pairs_calc (fftw_complex *output, unsigned long int pairs_number) {
 }
 
 void rng_pairs_calc_thr (void *thr_input) {
-	fftw_complex *temp_ptr1;
+	complex_t *temp_ptr1;
 	unsigned long int i;
 
 	struct rng_pairs_calc_thread_input *input;

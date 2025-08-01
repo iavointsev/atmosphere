@@ -14,13 +14,13 @@ void arrays_init (void) {
 	thr_S_k_calc = (struct S_k_calc_thread_input *) malloc ((THREADS_NUMBER)*sizeof(struct S_k_calc_thread_input));
 	thr_rng_pairs_calc = (struct rng_pairs_calc_thread_input *) malloc ((THREADS_NUMBER)*sizeof(struct rng_pairs_calc_thread_input));
 #endif /* THREADS_NUMBER */
-	psi = (fftw_complex*) fftw_malloc (NX_NY*sizeof(fftw_complex));
-	psi0 = (fftw_complex*) fftw_malloc (NX_NY*sizeof(fftw_complex));
-	psi_k = (fftw_complex*) fftw_malloc (NX_NY*sizeof(fftw_complex));
-/*	xi = (fftw_complex*) fftw_malloc (NX_NY*sizeof(fftw_complex)); */
-	S_k = (fftw_complex*) fftw_malloc (NX_NY_cr*sizeof(fftw_complex));
-	exp_refr = (fftw_complex*) fftw_malloc (NX_NY*sizeof(fftw_complex));
-	exp_diffr = (fftw_complex*) fftw_malloc (NX_NY*sizeof(fftw_complex));
+	psi = (complex_t*) fftw_malloc (NX_NY*sizeof(complex_t));
+	psi0 = (complex_t*) fftw_malloc (NX_NY*sizeof(complex_t));
+	psi_k = (complex_t*) fftw_malloc (NX_NY*sizeof(complex_t));
+/*	xi = (complex_t*) fftw_malloc (NX_NY*sizeof(complex_t)); */
+	S_k = (complex_t*) fftw_malloc (NX_NY_cr*sizeof(complex_t));
+	exp_refr = (complex_t*) fftw_malloc (NX_NY*sizeof(complex_t));
+	exp_diffr = (complex_t*) fftw_malloc (NX_NY*sizeof(complex_t));
 
 	xi_k_mul = (double*) fftw_malloc (noise_NX_NY_cr*sizeof(double));
 	S = (double*) fftw_malloc (NX_NY*sizeof(double));

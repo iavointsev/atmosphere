@@ -6,11 +6,11 @@ Scaling of the c2r Fourier array.
 #include <unistd.h>
 #include <fftw3.h>
 #include <complex.h>
-#include "dataio.h"
+#include "utils.h"
 
 int main(int argc, char** argv) {
 	double z=0.0, LX=0.0, LY=0.0;
-	fftw_complex *initial, *output;
+	complex_t *initial, *output;
 	unsigned long int factor=0, i, j, ij, ij_new, new_NX=0, new_NY=0, NX=0, NY=0, NX_cr, new_NX_cr;
 	
 	/*Parsing command line.*/
@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
 	read_data_params (argv[1], &NX, &NY, &LX, &LY, &z);
 	printf ("Parameters read: NX=%lu, NY=%lu, LX=%.15e, LY=%.15e, z=%.15e\n", NX, NY, LX, LY, z);
 	NX_cr = NX/2 + 1;
-	initial = (fftw_complex*) malloc (NX_cr*NY*sizeof(fftw_complex));
+	initial = (complex_t*) malloc (NX_cr*NY*sizeof(complex_t));
 	read_data_cr (argv[1], initial, &NX, &NY, &LX, &LY, &z);
 
 	sscanf (argv [2], "%lu", &factor);
@@ -33,9 +33,9 @@ int main(int argc, char** argv) {
 	new_NY = NY*factor;
 	new_NX_cr = new_NX/2 + 1;
 	printf ("New parameters: NX=%lu, NY=%lu, LX=%.15e, LY=%.15e, z=%.15e\n", new_NX, new_NY, LX, LY, z);
-	output = (fftw_complex*) malloc (new_NX_cr*new_NY*sizeof(fftw_complex));
+	output = (complex_t*) malloc (new_NX_cr*new_NY*sizeof(complex_t));
 
-	memset (output, 0, new_NX_cr*NY*sizeof(fftw_complex));
+	memset (output, 0, new_NX_cr*NY*sizeof(complex_t));
 
 	for (i=0; i <= NY/2; ++i)
 		for (j=0; j < NX_cr; ++j) {

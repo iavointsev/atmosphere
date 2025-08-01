@@ -1,66 +1,177 @@
 /*** Program for generation of initial conditions ***/
 
-#include "dataio.h"
+#include "utils.h"
 
-/*** #include <unistd.h>
-#include <fenv.h>
-#include <time.h> ***/
+typedef enum { PLANE, GAUSS } WaveProfile;
 
-#define _VERBOSE
-#define _SAVE_FILE_GNU
+typedef struct {
+    char *conf_file;
+    WaveProfile profile;
+} CmdArgs;
 
+static void generate_plane_wave(complex_t *restrict psi, size_t NX, size_t NY,
+                                double *psi_integral);
 
-int main (int argc, char **argv) {
-	FILE *f_p;
-	fftw_complex *complex_array1, *temp_ptr1;
-	double x, y, distance=0.0;
-	unsigned long int i, j, ij;
+static void generate_gauss_wave(complex_t *restrict psi, size_t NX, size_t NY,
+                                double over_width_sqr, double *psi_integral);
 
-	/*Parsing command line.*/
-	if (argc < 3)
-	{
-		printf ("Using is the following:\n");
-		printf("%s conf_file_name output_data_file_name\n", argv[0]);
-		exit (1);
-	}
+static complex_t *generate_wave(size_t NX, size_t NY, double LX, double LY,
+                                double w_0, WaveProfile profile);
 
-	unsigned long int NX=0, NY=0, noise_NX=0, noise_NY=0, realizations_number=0, realizations_save_step=0;
-	double LX=0.0, LY=0.0, delta_z=0.0, lambda_0=0.0, n_0=0.0, C_n_sqr=0.0, w_0=0.0, l_0=0.0, L_0=0.0;
+static void generate_gauss_wave(complex_t *restrict psi, size_t NX, size_t NY,
+                                double over_width_sqr,
+                                double *restrict psi_integral);
 
-    unsigned long int N_BINS;
-    double max_intensity_value = 0.0;
+static void generate_plane_wave(complex_t *restrict psi, size_t NX, size_t NY,
+                                double *restrict psi_integral);
 
-	read_conf_file (argv[1], &NX, &NY, &noise_NX, &noise_NY, &LX, &LY, &delta_z, &lambda_0, &n_0, &C_n_sqr, &w_0, &l_0, &L_0, &realizations_number, &realizations_save_step, &max_intensity_value, &N_BINS);
+static CmdArgs parse_args(int argc, char **argv);
 
-#ifdef VERBOSE
-	printf ("NX=%lu	NY=%lu	LX=%.6e	LY=%.6e	w_0=%.6e\n", NX, NY, LX, LY, w_0);
-#endif /* VERBOSE */
-	double delta_x = LX/NX;
-	double delta_y = LY/NY;
-	double LX_2 = 0.5*LX;
-	double LY_2 = 0.5*LY;
-	double Over_sqr_w_0 = 1.0/(w_0*w_0);
-	double sum=0.0;
+static void generate_inital_fname(char *buffer, size_t size,
+                                  ProblemConfig config);
 
-	complex_array1 = (fftw_complex*) fftw_malloc (NX*NY*sizeof(fftw_complex));
+int main(int argc, char **argv) {
+    CmdArgs cmd_args = parse_args(argc, argv);
 
-	for (i=0; i < NY; ++i) {
-		y = delta_y*i - LY_2;
-		for (j=0; j < NX; ++j) {
-			x = delta_x*j - LX_2;
-			ij = NX*i + j;
-			complex_array1[ij][0] = exp(-Over_sqr_w_0*(x*x + y*y));
-			complex_array1[ij][1] = 0.0;
-			sum += (complex_array1[ij][0]);
-		}
-	}
-	printf ("Integral of |psi(r)|=%.15e\n", sum*(LX*LY/(NX*NY)));
+    const ProblemConfig config = read_config(cmd_args.conf_file);
+    const size_t NX = config.NX, NY = config.NY;
+    const double LX = config.LX, LY = config.LY, w_0 = config.w_0;
 
-#ifdef SAVE_FILE_GNU
-	save_GNU_XY_c ("GNU.really_initial_data_XY.cdata", complex_array1, NX, NY, LX, LY, 4);
-#endif /* SAVE_FILE_GNU */
+    char inital_fname[128];
+    generate_inital_fname(buffer, size, config);
 
-	save_data_complex (argv[2], complex_array1, &NX, &NY, &LX, &LY, &distance);
+    const complex_t *psi = generate_wave(NX, NY, LX, LY, w_0, profile);
+    save_data_complex(inital_fname, psi, NX, NY, LX, LY, 0.0);
 
-	return 0;
+    fftw_free((void *)psi);  // небезопасно, если save_data_complex упадет
+    return 0;
+}
+
+static complex_t *generate_wave(size_t NX, size_t NY, double LX, double LY,
+                                double w_0, WaveProfile profile) {
+    const double over_width_sqr = (profile == GAUSS) ? 1.0 / (w_0 * w_0) : 0.0;
+
+    complex_t *psi = (complex_t *)fftw_malloc(NX * NY * sizeof(complex_t));
+    if (!psi) {
+        fprintf(stderr, "Allocation (%lu x %lu) array failed\n", NX, NY);
+        exit(EXIT_FAILURE);
+    }
+
+    double psi_integral = 0.0;
+
+    switch (profile) {
+        case GAUSS:
+            generate_gauss_wave(psi, NX, NY, x_start, y_start, dx, dy,
+                                over_width_sqr, &psi_integral);
+            break;
+        case PLANE:
+            generate_plane_wave(psi, NX, NY, x_start, y_start, dx, dy,
+                                &psi_integral);
+            break;
+        default:
+            fprintf(stderr, "Unknown wave profile.\n");
+            fftw_free(psi);
+            exit(EXIT_FAILURE);
+    }
+
+    printf("Estimated integral of |psi(r)| = %.15e\n", psi_integral * dx * dy);
+    return psi;
+}
+
+static CmdArgs parse_args(int argc, char **argv) {
+    CmdArgs args = {
+        .conf_file = NULL,
+        .profile = PLANE,
+    };
+
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s config_file [OPTIONS]\n", argv[0]);
+        fprintf(stderr, "Options:\n");
+        fprintf(
+            stderr,
+            "  -p, --profile [gauss|plane]  Wave profile (default: plane)\n");
+        exit(EXIT_FAILURE);
+    }
+
+    args.conf_file = argv[1];
+
+    for (int i = 2; i < argc; i++) {
+        if (strcmp(argv[i], "-p") == 0 || strcmp(argv[i], "--profile") == 0) {
+            if (argc < i + 1) {
+                fprintf(stderr, "Missing profile value\n");
+                exit(EXIT_FAILURE);
+            }
+            i++;
+            if (strcmp(argv[i], "gauss") == 0) {
+                args.profile = GAUSS;
+            } else if (strcmp(argv[i], "plane") == 0) {
+                args.profile = PLANE;
+            } else {
+                fprintf(stderr, "Invalid profile: %s\n", argv[i]);
+                exit(EXIT_FAILURE);
+            }
+        } else {
+            fprintf(stderr, "Unknown option: %s\n", argv[i]);
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    return args;
+}
+
+static void generate_inital_fname(char *buffer, size_t size,
+                                  ProblemConfig config) {
+    snprintf(buffer, size,
+             "initial.grid_%lux%lu.noise_%lux%lu.realizations_%lu.cdata",
+             config.NX, config.NY, config.noise_NX, config.noise_NY,
+             config.realizations_number);
+}
+
+static void generate_gauss_wave(complex_t *restrict psi, size_t NX, size_t NY,
+                                double over_width_sqr,
+                                double *restrict psi_integral) {
+    const double dx = LX / NX;
+    const double dy = LY / NY;
+    const double x_start = -LX / 2.0;
+    const double y_start = -LY / 2.0;
+
+    for (size_t iy = 0; iy < NY; ++iy) {
+        const double y = y_start + dy * iy;
+        const double y2 = y * y;
+        for (size_t ix = 0; ix < NX; ++ix) {
+            const double x = x_start + dx * ix;
+            const double value = exp(-over_width_sqr * (x * x + y2));
+
+            const size_t idx = iy * NX + ix;
+            psi[idx][0] = value;
+            psi[idx][1] = 0.0;
+            *psi_integral += value;
+        }
+    }
+}
+
+static void generate_plane_wave(complex_t *restrict psi, size_t NX, size_t NY,
+                                double *restrict psi_integral) {
+    const double dx = LX / NX;
+    const double dy = LY / NY;
+    const double x_start = -LX / 2.0;
+    const double y_start = -LY / 2.0;
+
+    for (size_t iy = 0; iy < NY; ++iy) {
+        const double y = y_start + dy * iy;
+        const double tanh_y =
+            0.5 * (tanh(-(y - 1.2) / 0.1) - tanh(-(y + 1.2) / 0.1));
+
+        for (size_t ix = 0; ix < NX; ++ix) {
+            const double x = x_start + dx * ix;
+            const double tanh_x =
+                0.5 * (tanh(-(x - 1.2) / 0.1) - tanh(-(x + 1.2) / 0.1));
+            const double value = tanh_x * tanh_y;
+
+            const size_t idx = iy * NX + ix;
+            psi[idx][0] = value;
+            psi[idx][1] = 0.0;
+            *psi_integral += value;
+        }
+    }
 }
