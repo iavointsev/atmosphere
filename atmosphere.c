@@ -42,6 +42,18 @@ char file_name[256];
 #include "arrays_calc.c"
 #include "arrays_init.c"
 
+// отвратительно, но пока что так
+static void unpack_config(ProblemConfig config, size_t *NX, size_t *NY, size_t *noise_NX, size_t *noise_NY,
+						  double *LX, double *LY, double *delta_z, double *lambda_0, double *n_0, double *C_n_sqr,
+						  double *w_0, double *l_0, double *L_0, size_t *realizations_number, size_t *realizations_save_step,
+						  double *max_intensity_value, size_t *N_BINS)
+{
+	*NX = config.NX; *NY = config.NY; *noise_NX = config.noise_NX; *noise_NY = config.noise_NY;
+	*LX = config.LX; *LY = config.LY; *delta_z = config.delta_z; *lambda_0 = config.lambda_0;
+	*n_0 = config.n_0; *C_n_sqr = config.C_n_sqr; *w_0 = config.w_0; *l_0 = config.l_0;
+	*L_0 = config.L_0; *realizations_number = config.realizations_number; *realizations_save_step = config.realizations_save_step; 
+	*max_intensity_value = config.max_intensity_value; *N_BINS = config.N_BINS;
+}
 
 int main (int argc, char** argv) {
 	char name[256], name2[256], ext[256], temp_char[256];
@@ -57,7 +69,10 @@ int main (int argc, char** argv) {
 		exit (1);
 	}
 
-	read_config (argv[1], &NX, &NY, &noise_NX, &noise_NY, &LX, &LY, &delta_z, &lambda_0, &n_0, &C_n_sqr, &w_0, &l_0, &L_0, &realizations_number, &realizations_save_step, &max_intensity_value, &N_BINS);
+	const ProblemConfig config = read_config(argv[1]);
+	unpack_config(config, &NX, &NY, &noise_NX, &noise_NY, &LX, &LY, &delta_z, &lambda_0, &n_0, &C_n_sqr, &w_0, &l_0, &L_0, 
+		&realizations_number, &realizations_save_step, &max_intensity_value, &N_BINS);
+
 #ifdef SCALES_FILTER
 	k_mask_smallest_sqr = double_M_PI/L_0;
 	k_mask_smallest_sqr *= k_mask_smallest_sqr; /* To make squared k */
