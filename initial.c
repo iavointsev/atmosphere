@@ -44,7 +44,7 @@ int main(int argc, char **argv)
 {
 	CmdArgs cmd_args = parse_args(argc, argv);
 
-	const ProblemConfig config = read_conf_file(cmd_args.conf_file);
+	const ProblemConfig config = read_config(cmd_args.conf_file);
 	const size_t NX = config.NX, NY = config.NY;
 	const double LX = config.LX, LY = config.LY, w_0 = config.w_0;
 

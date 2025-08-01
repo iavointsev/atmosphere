@@ -57,7 +57,7 @@ int main (int argc, char** argv) {
 		exit (1);
 	}
 
-	read_conf_file (argv[1], &NX, &NY, &noise_NX, &noise_NY, &LX, &LY, &delta_z, &lambda_0, &n_0, &C_n_sqr, &w_0, &l_0, &L_0, &realizations_number, &realizations_save_step, &max_intensity_value, &N_BINS);
+	read_config (argv[1], &NX, &NY, &noise_NX, &noise_NY, &LX, &LY, &delta_z, &lambda_0, &n_0, &C_n_sqr, &w_0, &l_0, &L_0, &realizations_number, &realizations_save_step, &max_intensity_value, &N_BINS);
 #ifdef SCALES_FILTER
 	k_mask_smallest_sqr = double_M_PI/L_0;
 	k_mask_smallest_sqr *= k_mask_smallest_sqr; /* To make squared k */

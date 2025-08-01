@@ -54,7 +54,7 @@ void angle_sqr_avrg_GNU_k_cr (char* f_name, complex_t *input, unsigned long int 
 void save_point_complex_GNU (char* f_name, complex_t input, double index_value1, double index_value2);
 void save_point_real_GNU (char* f_name, double input, double index_value1);
 
-void read_conf_file(char* f_name);
+ProblemConfig read_config(char* f_name);
 
 void read_rng_state (char *f_name, gsl_rng *rng);
 void save_rng_state (char *f_name, gsl_rng *rng);
